@@ -1,0 +1,33 @@
+package com.lksfx.virusByte.android;
+
+import android.os.Bundle;
+import android.view.WindowManager;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.immersion.uhl.Launcher;
+import com.lksfx.virusByte.VirusByteGame;
+
+public class AndroidLauncher extends AndroidApplication {
+	public Launcher m_launcher = null;
+	
+	@Override
+	protected void onCreate (Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		config.useAccelerometer = false;
+		config.useCompass = false;
+		
+		try {
+			m_launcher = new Launcher(this);
+		} catch(RuntimeException ex) {
+			Gdx.app.log("VirusByte: ", "Immersion Runtime exception");
+			ex.printStackTrace();
+		}
+		
+		ServicesAndroid services = new ServicesAndroid(m_launcher);
+		initialize(new VirusByteGame( services ), config);
+	}
+}

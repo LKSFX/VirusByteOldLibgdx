@@ -1,0 +1,499 @@
+package com.lksfx.virusByte.gameObject.abstractTypes;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.lksfx.virusByte.gameControl.debug.Debug;
+
+public abstract class DraggableVirus extends VirusType {
+	
+	protected Vector2 velocityPush = new Vector2();  
+	protected Vector2 movement = new Vector2();  
+	protected Vector2 dir = new Vector2();
+	protected TextureRegion pointer;
+	
+	protected float pointerSize = 1f;
+	protected Vector3 lastMousePos = Vector3.Zero;
+	protected int pushPower;
+	protected int mouseDeltaDistance;
+	protected boolean pushed = false;
+	public boolean grabbed = false;
+	protected static boolean DEBUG = false; //set debug mode ON or OFF in this virus
+	
+	protected int velMuitiplier;
+	protected float grabLimit = .4f, grabTime, grabDistanceLimit;
+	
+	public DraggableVirus() {
+		this(MathUtils.random(64, WORLD_WIDTH-64), MathUtils.random(WORLD_HEIGHT+640 , WORLD_HEIGHT+64));
+	}
+	
+	public DraggableVirus(float x, float y) {
+		this(x, y, 5, 150, 350, new Color( Color.WHITE ), true);
+	}
+	
+	public DraggableVirus(float x, float y, int point, int minSpd, int maxSpd, Color trailColor, boolean trailOn) {
+		super(x, y, point, minSpd, maxSpd, trailColor, trailOn);
+		velMuitiplier = 5;
+		dragOriginPosition = new Vector2();
+		grabDistanceLimit =  (float) Math.sqrt( WORLD_WIDTH + WORLD_HEIGHT ) * 4;
+		if ( DEBUG ) Debug.log("grabDistanceLimit " + grabDistanceLimit);
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch,float deltaTime) {
+		if (!draw) return;
+		if (TUTORIAL) {
+			if (!pushed) {
+				batch.setColor(1f, 1f, 1f, .65f);
+				pointerSize += pointerSize > 3f ? -pointerSize : .05f;
+				float xx = blind ? position.x-58f : position.x-64f;
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 325f);
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 270f);
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 215f);
+			}
+		}
+		debug_drawings(batch);
+			
+		if (anim != null) {
+			batch.setColor(trailColor);
+			for (int i = trailList.size-1; i > 0; i--) {
+				float inc = i * 0.020f;
+				trailColor.a = inc > 0.5f? 0.5f : inc;
+				batch.draw(trail, trailList.get(i).xx, trailList.get(i).yy, trailList.get(i).centerOriginX, trailList.get(i).centerOriginY,
+						trailList.get(i).width, trailList.get(i).height, trailList.get(i).scaleX, trailList.get(i).scaleY, trailList.get(i).angle); //draw trail
+			}
+			trailColor.a = 0.3f;
+			batch.setColor(spriteColor);
+			batch.draw(anim.getKeyFrame(elapsedTime, true), spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY, 
+					currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+		}
+	}
+	
+	/*------------------------------------------------*/
+	@Override
+	public boolean draggedTouch(Vector3 mousePos) {
+			
+			if (grabTime > grabLimit || dragOriginPosition.dst(position.x, position.y) > 150f) {
+				grabbed = false;
+				depth = 5;
+			}
+			
+			if (grabbed) {
+				position.x = lastMousePos.x;
+				position.y = lastMousePos.y;
+				sprite_bounds.setCenter(position);
+				mouseDeltaDistance = distanceTo(mousePos, lastMousePos);
+				if (mouseDeltaDistance > pushPower) {
+					pushPower = mouseDeltaDistance;
+					dir.set(mousePos.x, mousePos.y).sub(position).nor();
+				}
+				//pushPower = mouseDeltaDistance > pushPower ? mouseDeltaDistance : pushPower;
+				if (DEBUG) Debug.log("clicked over infector");
+			
+			
+				grabTime += Gdx.graphics.getDeltaTime(); 
+			
+				//Debug.log("distance from last mousePos: " + mouseDeltaDistance + " | record: " + record);
+				lastMousePos.set(mousePos);
+			}
+			HOLDING_VIRUS = grabbed;
+		return false;
+	}
+	
+	/**the position where the drag begin*/
+	protected Vector2 dragOriginPosition;
+	
+	@Override
+	public boolean pressedTouch(Vector3 mousePos) { //click unico
+		if ( HOLDING_VIRUS ) return false;
+		if ( isOver( mousePos ) ) {
+			if ( !grabbed ) dragOriginPosition.set(position.x, position.y); //update the origin of the drag
+			grabbed = true;
+			depth = 15;
+			mouseDeltaDistance = 0;
+			lastMousePos.set( mousePos );
+			grabTime = 0;
+			if (trailOn) {
+				for ( TrailIndex trail : trailList ) trailPool.free(trail);
+				trailList.clear();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	protected float last_x = 0f, last_y = 0f;
+	
+	public boolean releaseTouch(Vector3 mousePos) {
+		if (grabbed) {
+			if (pushPower > 15) {
+				//move = true;
+				float spd = (float)pushPower * velMuitiplier;
+				//logMsg = new PointLog(point, position.x, position.y, true, virus_id, true, comboInterval);
+				last_x = position.x; //record last x position before be pushed off the screen
+				last_y = position.y; //record last y position before be pushed off the screen
+				if (DEBUG) Debug.log("infector push speed: "+spd);
+				setTrailSize( Math.min(MathUtils.round(spd/20), 20) );
+				velocityPush.set( dir ).scl( spd );
+				movement.set(velocityPush).scl(Gdx.graphics.getDeltaTime());
+				pushed = true;
+				this.speed = (int)spd;
+			}
+			grabbed = false;
+			depth = 5;
+			HOLDING_VIRUS = false;
+		}
+		return false;
+	}
+	/*------------------------------------------------*/
+	
+	@Override
+	public void movementUpdate(float deltaTime) {
+		if (pushed) {
+			movement.set( velocityPush ).scl(deltaTime * 3);
+            position.add( movement );
+            sprite_bounds.setCenter(position);
+            VirusType coll = collisionDetection(true);
+	        if (coll != null) {
+	        	if (DEBUG) Debug.log(""+ coll.position);
+	        	collision(coll);
+	        }
+	        if (!VIEWPORT.getCamera().frustum.boundsInFrustum(position.x, position.y, 0f, currentFrameWidth, currentFrameHeight, 0f)) {
+	        	destroy(true, true);
+	        }
+		} else {
+			if (move) {
+				position.y -= deltaTime * speed;
+				sprite_bounds.setCenter(position);
+			}
+		}
+	}
+	
+	protected abstract void collision(VirusType coll);
+	
+	@Override
+	public void updateTrail() {
+		if ( !TRAILS_ACTIVE || !trailOn || grabbed ) return;
+		if (trail == null) return;
+		if (trailList.size == 0) {
+			TrailIndex trailInfo = trailPool.obtain();
+			if ( trailInfo != null ) {
+				trailInfo.set(spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY,
+						currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+				trailList.add(trailInfo);
+			}
+		} else {
+			if (Vector2.dst(trailList.peek().xx, trailList.peek().yy, position.x, position.y) > minimumDistanceToTheLastTrailPosition) {
+				TrailIndex trailInfo = trailPool.obtain();
+				if ( trailInfo != null ) {
+					trailInfo.set(spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY,
+							currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+					trailList.add(trailInfo);
+				}
+				if (trailList.size > trailSize) {
+					trailPool.free( trailList.removeIndex(0) );
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void resetInPosition(float posX, float posY, VirusConfig config) {
+		if (TUTORIAL) pointerSize = 1f;
+		super.resetInPosition(posX, posY, config);
+	}
+	
+	// ========================== //
+	// =======  GETTERS  ======== //
+	// ========================== //
+	
+	public float getPushPower() {
+		return pushPower;
+	}
+	
+	// ========================== //
+	// ========================== //
+	
+	@Override
+	public void reset() {
+		super.reset();
+		last_x = 0f;
+		last_y = 0f;
+		pushed = false;
+		grabbed = false;
+		pushPower = 0;
+	}
+}
+
+
+/////////////////////////////
+/////////////////////////////
+///// Backup Method 2 ///////
+/////////////////////////////
+/////////////////////////////
+
+package com.lksfx.virusByte.gameObject.abstractTypes;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.lksfx.virusByte.gameControl.debug.Debug;
+
+public abstract class DraggableVirus extends VirusType {
+	
+	protected Vector2 velocityPush = new Vector2();  
+	protected Vector2 movement = new Vector2();  
+	protected Vector2 dir = new Vector2();
+	protected TextureRegion pointer;
+	
+	protected float pointerSize = 1f;
+	protected Vector3 lastMousePos = Vector3.Zero;
+	protected int pushPower;
+	protected int mouseDeltaDistance;
+	protected boolean pushed = false;
+	public boolean grabbed = false;
+	protected static boolean DEBUG = false; //set debug mode ON or OFF in this virus
+	
+	protected int velMuitiplier;
+	protected float grabLimit = .4f, grabTime, grabDistanceLimit;
+	
+	public DraggableVirus() {
+		this(MathUtils.random(64, WORLD_WIDTH-64), MathUtils.random(WORLD_HEIGHT+640 , WORLD_HEIGHT+64));
+	}
+	
+	public DraggableVirus(float x, float y) {
+		this(x, y, 5, 150, 350, new Color( Color.WHITE ), true);
+	}
+	
+	public DraggableVirus(float x, float y, int point, int minSpd, int maxSpd, Color trailColor, boolean trailOn) {
+		super(x, y, point, minSpd, maxSpd, trailColor, trailOn);
+		velMuitiplier = 5;
+		dragOriginPosition = new Vector2();
+		grabDistanceLimit =  (float) Math.sqrt( WORLD_WIDTH + WORLD_HEIGHT ) * 4;
+		allowScaleOnTouchMask = false;
+		if ( DEBUG ) Debug.log("grabDistanceLimit " + grabDistanceLimit);
+	}
+	
+	@Override
+	public void draw(SpriteBatch batch,float deltaTime) {
+		if ( !draw ) return;
+		if (TUTORIAL) {
+			if (!pushed) {
+				batch.setColor(1f, 1f, 1f, .65f);
+				pointerSize += pointerSize > 3f ? -pointerSize : .05f;
+				float xx = position.x-64f;
+				//batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, 1f, 1f, 0f);
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 325f);
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 270f);
+				batch.draw(pointer, xx, position.y-16f, 64f, 16f, 64f, 32f, Math.min(pointerSize, 2f), 1f, 215f);
+			}
+		}
+		super.draw(batch, deltaTime);
+		/*debug_drawings(batch);
+			
+		if (anim != null) {
+			batch.setColor(trailColor);
+			for (int i = trailList.size-1; i > 0; i--) {
+				float inc = i * .001f;
+				trailColor.a = inc > 0.5f? 0.5f : inc;
+				batch.draw(trail, trailList.get(i).xx, trailList.get(i).yy, trailList.get(i).centerOriginX, trailList.get(i).centerOriginY,
+						trailList.get(i).width, trailList.get(i).height, trailList.get(i).scaleX, trailList.get(i).scaleY, trailList.get(i).angle); //draw trail
+			}
+			trailColor.a = 0.3f;
+			batch.setColor(spriteColor);
+			batch.draw(anim.getKeyFrame(elapsedTime, true), spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY, 
+					currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+		}*/
+	}
+	
+	/*------------------------------------------------*/
+	@Override
+	public boolean draggedTouch(Vector3 mousePos) {
+			
+			if (grabTime > grabLimit || dragOriginPosition.dst(position.x, position.y) > 150f) {
+				grabbed = false;
+				depth = 5;
+			}
+			
+			if (grabbed) {
+				position.x = lastMousePos.x;
+				position.y = lastMousePos.y;
+				sprite_bounds.setCenter(position);
+				mouseDeltaDistance = distanceTo(mousePos, lastMousePos);
+				if (mouseDeltaDistance > pushPower) {
+					pushPower = mouseDeltaDistance;
+					dir.set(mousePos.x, mousePos.y).sub(position).nor();
+				}
+				//pushPower = mouseDeltaDistance > pushPower ? mouseDeltaDistance : pushPower;
+				if (DEBUG) Debug.log("clicked over infector");
+			
+			
+				grabTime += Gdx.graphics.getDeltaTime(); 
+			
+				//Debug.log("distance from last mousePos: " + mouseDeltaDistance + " | record: " + record);
+				lastMousePos.set( mousePos );
+			}
+			HOLDING_VIRUS = grabbed;
+		return false;
+	}
+	
+	/**the position where the drag begin*/
+	protected Vector2 dragOriginPosition;
+	
+	@Override
+	public boolean pressedTouch(Vector3 mousePos) { //click unico
+		if ( HOLDING_VIRUS ) return false;
+		if ( isOver( mousePos ) ) {
+			if ( !grabbed ) dragOriginPosition.set(position.x, position.y); //update the origin of the drag
+			grabbed = true;
+			depth = 15;
+			mouseDeltaDistance = 0;
+			lastMousePos.set( mousePos );
+			grabTime = 0;
+			if ( trailOn ) {
+				for ( TrailIndex trail : trailList ) trailPool.free(trail);
+				trailList.clear();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	protected float last_x = 0f, last_y = 0f;
+	
+	public boolean releaseTouch(Vector3 mousePos) {
+		if ( grabbed ) {
+			/*if (pushPower > 15) {
+				//move = true;
+				float spd = (float)pushPower * velMuitiplier;
+				//logMsg = new PointLog(point, position.x, position.y, true, virus_id, true, comboInterval);
+				last_x = position.x; //record last x position before be pushed off the screen
+				last_y = position.y; //record last y position before be pushed off the screen
+				if (DEBUG) Debug.log("infector push speed: "+spd);
+				setTrailSize( Math.min(MathUtils.round(spd/20), 20) );
+				velocityPush.set( dir ).scl( spd );
+				movement.set(velocityPush).scl(Gdx.graphics.getDeltaTime());
+				pushed = true;
+				this.speed = (int)spd;
+			}
+			grabbed = false;
+			depth = 5;*/
+			move = true;
+			last_x = position.x; //record last x position before be pushed off the screen
+			last_y = position.y; //record last y position before be pushed off the screen
+			HOLDING_VIRUS = false;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean flingTouch(float velocityX, float velocityY, int button) {
+		if ( grabbed ) {
+			velocityX = Math.abs( velocityX );
+			velocityY = Math.abs( velocityY );
+			float spd = (float)pushPower * velMuitiplier;
+			setTrailSize( Math.min(MathUtils.round(spd/20), 20) );
+			velocityPush.set( dir ).scl( spd );
+			movement.set(velocityPush).scl(Gdx.graphics.getDeltaTime());
+			pushed = true;
+			this.speed = (int)spd;
+			setTrailSize( Math.min(MathUtils.round(spd/20), 20) );
+			grabbed = false;
+			minimumDistanceToTheLastTrailPosition = 15f;
+			Debug.log( "FLING velocityX " + velocityX + " | velocityY: " + velocityY );
+			return true;
+		}
+		return false;
+	};
+	/*------------------------------------------------*/
+	
+	@Override
+	public void movementUpdate(float deltaTime) {
+		if (pushed) {
+			// when the virus has been grabbed and pushed
+			move = true;
+			movement.set( velocityPush ).scl(deltaTime * 3);
+            position.add( movement );
+            sprite_bounds.setCenter(position);
+            VirusType coll = collisionDetection(true);
+	        if (coll != null) {
+	        	if (DEBUG) Debug.log(""+ coll.position);
+	        	collision(coll);
+	        }
+	        if (!VIEWPORT.getCamera().frustum.boundsInFrustum(position.x, position.y, 0f, currentFrameWidth, currentFrameHeight, 0f)) {
+	        	destroy(true, true);
+	        }
+		} else {
+			if (move) {
+				position.y -= deltaTime * speed;
+				sprite_bounds.setCenter(position);
+			}
+		}
+	}
+	
+	protected abstract void collision(VirusType coll);
+	
+	@Override
+	public void updateTrail() {
+		if ( grabbed ) return;
+		super.updateTrail();
+		/*if ( !TRAILS_ACTIVE || !trailOn || grabbed ) return;
+		if (trail == null) return;
+		if (trailList.size == 0) {
+			TrailIndex trailInfo = trailPool.obtain();
+			if ( trailInfo != null ) {
+				trailInfo.set(spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY,
+						currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+				trailList.add(trailInfo);
+			}
+		} else {
+			if (Vector2.dst(trailList.peek().xx, trailList.peek().yy, position.x, position.y) > minimumDistanceToTheLastTrailPosition) {
+				TrailIndex trailInfo = trailPool.obtain();
+				if ( trailInfo != null ) {
+					trailInfo.set(spriteCenter.x, spriteCenter.y, currentOriginCenterX, currentOriginCenterY,
+							currentFrameWidth, currentFrameHeight, scaleX, scaleY, angle);
+					trailList.add(trailInfo);
+				}
+				if (trailList.size > trailSize) {
+					trailPool.free( trailList.removeIndex(0) );
+				}
+			}
+		}*/
+	}
+	
+	@Override
+	public void resetInPosition(float posX, float posY, VirusConfig config) {
+		if (TUTORIAL) pointerSize = 1f;
+		super.resetInPosition(posX, posY, config);
+		minimumDistanceToTheLastTrailPosition = 5f;
+	}
+	
+	// ========================== //
+	// =======  GETTERS  ======== //
+	// ========================== //
+	
+	public float getPushPower() {
+		return pushPower;
+	}
+	
+	// ========================== //
+	// ========================== //
+	
+	@Override
+	public void reset() {
+		super.reset();
+		last_x = 0f;
+		last_y = 0f;
+		pushed = false;
+		grabbed = false;
+		pushPower = 0;
+	}
+}

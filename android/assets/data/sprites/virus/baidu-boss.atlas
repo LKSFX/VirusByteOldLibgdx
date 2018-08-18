@@ -1,0 +1,285 @@
+
+baidu-boss.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+armor1
+  rotate: false
+  xy: 1, 773
+  size: 346, 240
+  orig: 346, 240
+  offset: 0, 0
+  index: -1
+armor2
+  rotate: false
+  xy: 1, 531
+  size: 346, 240
+  orig: 346, 240
+  offset: 0, 0
+  index: -1
+armor3
+  rotate: false
+  xy: 349, 773
+  size: 346, 240
+  orig: 346, 240
+  offset: 0, 0
+  index: -1
+baidu-lifebar
+  rotate: false
+  xy: 1, 189
+  size: 54, 340
+  orig: 54, 340
+  offset: 0, 0
+  index: -1
+cyan-head-open-mouth1
+  rotate: false
+  xy: 349, 670
+  size: 91, 101
+  orig: 91, 101
+  offset: 0, 0
+  index: -1
+cyan-head-open-mouth2
+  rotate: false
+  xy: 697, 912
+  size: 91, 101
+  orig: 91, 101
+  offset: 0, 0
+  index: -1
+green-head-open-mouth1
+  rotate: false
+  xy: 57, 428
+  size: 91, 101
+  orig: 91, 101
+  offset: 0, 0
+  index: -1
+green-head-open-mouth2
+  rotate: false
+  xy: 349, 567
+  size: 91, 101
+  orig: 91, 101
+  offset: 0, 0
+  index: -1
+cyan-head-blink1
+  rotate: false
+  xy: 442, 682
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+cyan-head-blink2
+  rotate: false
+  xy: 697, 821
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+cyan-head-hurt
+  rotate: false
+  xy: 790, 924
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+cyan-head-iddle1
+  rotate: false
+  xy: 57, 337
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+cyan-head-iddle2
+  rotate: false
+  xy: 150, 440
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+green-head-blink1
+  rotate: false
+  xy: 442, 591
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+green-head-blink2
+  rotate: false
+  xy: 534, 682
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+green-head-hurt
+  rotate: false
+  xy: 882, 924
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+green-head-iddle1
+  rotate: false
+  xy: 57, 246
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+green-head-iddle2
+  rotate: false
+  xy: 242, 440
+  size: 90, 89
+  orig: 90, 89
+  offset: 0, 0
+  index: -1
+pink-head-blink1
+  rotate: false
+  xy: 534, 591
+  size: 77, 89
+  orig: 77, 89
+  offset: 0, 0
+  index: -1
+pink-head-blink2
+  rotate: false
+  xy: 626, 682
+  size: 77, 89
+  orig: 77, 89
+  offset: 0, 0
+  index: -1
+pink-head-hurt
+  rotate: false
+  xy: 613, 591
+  size: 77, 89
+  orig: 77, 89
+  offset: 0, 0
+  index: -1
+pink-head-iddle1
+  rotate: false
+  xy: 1, 98
+  size: 77, 89
+  orig: 77, 89
+  offset: 0, 0
+  index: -1
+pink-head-iddle2
+  rotate: false
+  xy: 1, 7
+  size: 77, 89
+  orig: 77, 89
+  offset: 0, 0
+  index: -1
+pink-head-open-mouth1
+  rotate: false
+  xy: 705, 732
+  size: 77, 87
+  orig: 77, 87
+  offset: 0, 0
+  index: -1
+pink-head-open-mouth2
+  rotate: false
+  xy: 705, 643
+  size: 77, 87
+  orig: 77, 87
+  offset: 0, 0
+  index: -1
+hand1
+  rotate: false
+  xy: 692, 573
+  size: 75, 68
+  orig: 75, 68
+  offset: 0, 0
+  index: -1
+hand2
+  rotate: false
+  xy: 349, 497
+  size: 75, 68
+  orig: 75, 68
+  offset: 0, 0
+  index: -1
+hand3
+  rotate: false
+  xy: 334, 427
+  size: 75, 68
+  orig: 75, 68
+  offset: 0, 0
+  index: -1
+cyan-egg
+  rotate: false
+  xy: 974, 965
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+egg-trail
+  rotate: false
+  xy: 57, 196
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+baidu-head
+  rotate: false
+  xy: 107, 185
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+cyan-dardo1
+  rotate: false
+  xy: 80, 118
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+cyan-dardo2
+  rotate: false
+  xy: 80, 51
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+green-egg
+  rotate: false
+  xy: 80, 1
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+pink-egg
+  rotate: false
+  xy: 974, 915
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+green-dardo1
+  rotate: false
+  xy: 442, 524
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+green-dardo2
+  rotate: false
+  xy: 508, 524
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+pink-dardo1
+  rotate: false
+  xy: 574, 524
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+pink-dardo2
+  rotate: false
+  xy: 146, 118
+  size: 64, 65
+  orig: 64, 65
+  offset: 0, 0
+  index: -1
+combo-icon
+  rotate: false
+  xy: 146, 57
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1

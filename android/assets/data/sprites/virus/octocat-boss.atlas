@@ -1,0 +1,75 @@
+
+octocat-boss.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+octocat-lifebar
+  rotate: false
+  xy: 1, 62
+  size: 54, 340
+  orig: 54, 340
+  offset: 0, 0
+  index: -1
+octocat1-fase1
+  rotate: false
+  xy: 57, 270
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+octocat1-fase2
+  rotate: false
+  xy: 57, 136
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+octocat1-fase3
+  rotate: false
+  xy: 288, 270
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+octocat2-fase1
+  rotate: false
+  xy: 288, 136
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+octocat2-fase2
+  rotate: false
+  xy: 519, 270
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+octocat2-fase3
+  rotate: false
+  xy: 519, 136
+  size: 229, 132
+  orig: 229, 132
+  offset: 0, 0
+  index: -1
+combo-icon
+  rotate: false
+  xy: 1, 1
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+hell-cat-head
+  rotate: false
+  xy: 57, 75
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+normal-cat-head
+  rotate: false
+  xy: 750, 343
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1

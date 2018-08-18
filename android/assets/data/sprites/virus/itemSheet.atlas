@@ -1,0 +1,103 @@
+
+itemSheet.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+antivirus1
+  rotate: false
+  xy: 1, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+antivirus2
+  rotate: false
+  xy: 67, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+saw-item0
+  rotate: false
+  xy: 133, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+saw-item1
+  rotate: false
+  xy: 199, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+saw-item2
+  rotate: false
+  xy: 265, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+saw-trail
+  rotate: false
+  xy: 331, 53
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+bomb-icon
+  rotate: false
+  xy: 1, 1
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+saw-icon
+  rotate: false
+  xy: 397, 67
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+shield-icon
+  rotate: false
+  xy: 53, 1
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+bomb0
+  rotate: false
+  xy: 449, 70
+  size: 43, 47
+  orig: 43, 47
+  offset: 0, 0
+  index: -1
+bomb1
+  rotate: false
+  xy: 105, 4
+  size: 43, 47
+  orig: 43, 47
+  offset: 0, 0
+  index: -1
+bomb2
+  rotate: false
+  xy: 150, 4
+  size: 43, 47
+  orig: 43, 47
+  offset: 0, 0
+  index: -1
+bomb3
+  rotate: false
+  xy: 195, 4
+  size: 43, 47
+  orig: 43, 47
+  offset: 0, 0
+  index: -1
+battery-item
+  rotate: false
+  xy: 240, 19
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

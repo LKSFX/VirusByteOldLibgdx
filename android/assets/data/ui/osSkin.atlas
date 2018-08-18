@@ -1,0 +1,33 @@
+
+osSkin.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+arrowIcon
+  rotate: false
+  xy: 1, 1
+  size: 100, 80
+  orig: 100, 80
+  offset: 0, 0
+  index: -1
+folderIcon
+  rotate: false
+  xy: 103, 1
+  size: 100, 80
+  orig: 100, 80
+  offset: 0, 0
+  index: -1
+homeIcon
+  rotate: false
+  xy: 205, 1
+  size: 100, 80
+  orig: 100, 80
+  offset: 0, 0
+  index: -1
+restartIcon
+  rotate: false
+  xy: 307, 1
+  size: 100, 80
+  orig: 100, 80
+  offset: 0, 0
+  index: -1

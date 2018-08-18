@@ -1,0 +1,9 @@
+<Level levelName="level 1" duration="2">
+	<TimeLine>
+		<Event triggerTime= "5" >
+			<SpawnVirus virus="Plague" speed="100" >
+				<Position x="50" y="100" />
+			</SpawnVirus>
+		</Event>
+	</TimeLine>
+</Level>

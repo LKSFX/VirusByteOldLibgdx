@@ -1,0 +1,109 @@
+package com.lksfx.virusByte.effects;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.lksfx.virusByte.Debug;
+import com.lksfx.virusByte.MyUtils;
+
+public class ForegroundEffects {
+	public static boolean IsActive, IsLaserActive;
+	public static float Duration;
+	private static FlashColor Flash;
+	private static Color LaserColor;
+	private static float Time, LaserTime;
+	
+	public static void showEffect(FlashColor flash, float duration) {
+		if ( IsActive && Flash == Flash.RED && Flash != flash) return;
+		ForegroundEffects.Duration += duration;
+		if ( IsActive && Flash == flash ) return;
+		Flash = flash;
+		IsActive = true;
+	}
+	
+	private static int swap = 0, swapLaserColor = 6, laserSwapTime = 1;
+	
+	public static void update(SpriteBatch batch, float delta, float width, float height) {
+		if (IsActive) {
+			Time += delta;
+			
+			//float alpha = Flash.color.a;
+			if (swap++ > 5) {
+				swap = 0;
+				Flash.color.a = Flash.color.a < .5f ?  MyUtils.choose(0.6f, 0.8f) : MyUtils.choose(0.3f, 0.4f);
+				//Flash.color.a = alpha != .8f ? .8f : .3f;
+			}
+			batch.setColor(Flash.color);
+			batch.draw(Flash.tex, 0, 0, width, height);
+			batch.setColor(1f, 1f, 1f, 1f);
+//			Debug.log("Foreground alpha is: " + Flash.color.a);
+			if (Time > Duration) {
+				IsActive = false;
+				Duration = 0f;
+				Flash = null;
+				Time = 0;
+			}
+		}
+		if (IsLaserActive) {
+			
+			if (swapLaserColor++ > 5) {
+				swapLaserColor = 0;
+				switch (laserSwapTime)
+				{
+				case 0:
+					LaserColor = FlashColor.BLUE.color;
+					break;
+				case 1:
+					LaserColor = FlashColor.RED.color;
+					break;
+				case 2:
+					LaserColor = FlashColor.WHITE.color;
+					break;
+				case 3:
+					LaserColor = FlashColor.BLACK.color;
+					break;
+				}
+				laserSwapTime = laserSwapTime == 3 ? 0 : laserSwapTime+1;
+				LaserColor.a = LaserColor.a < .5f ?  MyUtils.choose(0.6f, 0.8f) : MyUtils.choose(0.3f, 0.4f);
+			}
+			
+			batch.setColor(LaserColor);
+			batch.draw(FlashColor.BLUE.tex, 0, 0, width, height);
+			batch.setColor(1f, 1f, 1f, 1f);
+		}
+	}
+	
+	public enum FlashColor {
+		BLUE(new Color().BLUE), RED(new Color().RED), WHITE(new Color().WHITE), BLACK(new Color().BLACK);
+		
+		Texture tex;
+		Color color;
+		
+		private FlashColor(Color color) {
+			setTexture();
+			this.color = color;
+		}
+		
+		private void setTexture() {
+			Pixmap pix = new Pixmap(64, 64, Format.RGBA8888);
+			pix.setColor(new Color().WHITE);
+			pix.fill();
+			tex = new Texture(pix);
+		}
+		
+		public static void dispose() {
+			for (FlashColor t : values()) {
+				t.tex.dispose();
+			}
+		}
+		
+		public static void initialize() {
+			for (FlashColor t : values()) {
+				t.setTexture();
+			}
+		}
+	}
+}

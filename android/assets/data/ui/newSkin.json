@@ -1,0 +1,98 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	consolas18-bold: { file: data/fonts/consolas.fnt },
+	default: { file: data/fonts/visitor35_bold_scaled.fnt },  
+	default-font: { file: data/fonts/default.fnt }, 
+	visitor20: { file: data/fonts/visitor20.fnt }, 
+	visitor20-bold: { file: data/fonts/visitor20_bold.fnt }, 
+	visitor32-bold: { file: data/fonts/visitor32_bold.fnt }, 
+	visitor25-bold: { file: data/fonts/visitor25_bold.fnt },  
+	visitor20-bold: { file: data/fonts/visitor20_bold.fnt } 
+},
+com.badlogic.gdx.graphics.Color: {
+	aqua-light: {a: 1, b: 0.83, g: 0.84, r: 0.60},
+	green: { a: 1, b: 0, g: 1, r: 0 },
+	esp-green: {a: 1, b: 0.26, g: 0.6, r: 0.30},
+	white: { a: 1, b: 1, g: 1, r: 1 },
+	red: { a: 1, b: 0, g: 0, r: 1 },
+	black: { a: 1, b: 0, g: 0, r: 0 },
+	orange: { a: 1, b: 0, g: 0.64, r: 1 },
+	gray: { a:1, b: 0.74, g: 0.74, r: 0.74 }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+    tinted-white: { name: white, color: white },
+    tinted-frame: { name: big-frame, color: white },
+    tinted-thin: { name: cursor, color: white },
+    small-battery: { name: battery-small, color: white },
+    large-battery: { name: battery-big, color: white },
+    shop-frame: { name: item-frame, color: white },
+    shop-red-label: { name: money-red, color:white },
+    shop-blue-label: { name: money-blue, color:white },
+    shop-green-label: { name: money-green, color:white },
+    shop-white-label: { name: money-white, color:white },
+    shop-item-shadow: { name: item-shadow, color:white },
+    shop-buy-button: { name: buy-button, color:white },
+    small-mobicon: { name: mobicon-small, color: white },
+    large-mobicon: { name: mobicon-big, color: white },
+    rectangle-rounded: { name: retangle, color: white },
+    lksfx-logo: { name: dev_logo_lksfx, color: white },
+    2devic-logo: { name: dev_logo_2devic, color:white },
+    paarthunax-logo: { name: dev_logo_paarthunax, color: white },
+    main-logo: { name: logo, color: white },
+    cmd-field: { name: cmd-field, color: white },
+    cmd-button: { name: cmd-button, color: white },
+    threat-icon: { name: threat-icon, color: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+	default: { down: medium-frame, up: medium-frame },
+	toggle: { down: medium-frame, checked: medium-frame, up: medium-frame }
+}, 
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	default: { down: medium-frame, up: medium-frame, font: default-font, fontColor: white },
+	medium: { down: medium-frame, checked: medium-frame, up: medium-frame, checked: medium-frame, font: default, fontColor: white, downFontColor: white},
+	little: { down: little-frame, up: little-frame, font: visitor20-bold, fontColor: white },
+	little-white: { down: little-frame, up: little-frame, font: visitor20-bold, fontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	default: { down: medium-frame, up: medium-frame },
+	toggle: { down: medium-frame, checked: medium-frame, up: medium-frame },
+	slot: { down: item-slot, checked: item-slot, up: item-slot },
+	pause: { down: pause-yellow, checked: pause-yellow, up: pause-gray },
+	music-switch: { down: music-on, up: music-off, checked: music-on },
+	gamejolt-login: { down: gamejolt, up: gamejolt, checked: gamejolt },
+	sfx-switch: { down: sfx-on, up: sfx-off, checked: sfx-on },
+	vibration-switch: { down: vibration-on, up: vibration-off, checked: vibration-on },
+	options: { down: options-icon, up: options-icon, checked: options-icon },
+	seta-right: { down: seta2-right, up: seta2-right, checked: seta2-right },
+	seta-left: { down: seta2-left, up: seta2-left, checked: seta2-left },
+	close-green: { down: close, up: close, checked: close }
+},
+com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
+	window-tab: {down: tab-active, up: tab-inactive, checked: tab-active, font: visitor20-bold, checkedFontColor: white, fontColor: gray },
+	shop-buy-button: { down: buy-button, up: buy-button, checked: buy-button, font: visitor20-bold, fontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+	default: { font: default-font, fontColor: white },
+	wrong-msg: { font: default-font, fontColor: red },
+	visitor32: { font: visitor32-bold, fontColor: white },
+	visitor25: { font: visitor25-bold, fontColor: white },
+	visitor20: { font: visitor20-bold, fontColor: white },
+	visitor20-aqua-light: { font: visitor20-bold, fontColor: aqua-light },
+	visitor20-orange: { font: visitor20-bold, fontColor: orange },
+	visitor20-white: { font: visitor20-bold, fontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+	default: { titleFont: default-font, background: big-frame, titleFontColor: white },
+	frame1: { titleFont: visitor20-bold, background: window-frame2, titleFontColor: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+	volume-selector: { background: slider, knob: slider-knob }
+},
+com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+	default: { vScroll: vscroll-bar, vScrollKnob: scroll-knob }
+}
+,
+com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+	default: { font: visitor20-bold, fontColor: white }
+}
+}

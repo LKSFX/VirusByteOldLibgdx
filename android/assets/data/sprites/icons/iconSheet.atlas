@@ -1,0 +1,166 @@
+
+iconSheet.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+lifebar-fill
+  rotate: false
+  xy: 1, 211
+  size: 54, 293
+  orig: 54, 293
+  offset: 0, 0
+  index: -1
+circle-arrow
+  rotate: false
+  xy: 57, 386
+  size: 128, 118
+  orig: 128, 118
+  offset: 0, 0
+  index: -1
+alpha-circle
+  rotate: false
+  xy: 57, 284
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+ship1
+  rotate: false
+  xy: 1, 143
+  size: 46, 66
+  orig: 46, 66
+  offset: 0, 0
+  index: -1
+ship2
+  rotate: false
+  xy: 187, 438
+  size: 46, 66
+  orig: 46, 66
+  offset: 0, 0
+  index: -1
+coin-big1
+  rotate: false
+  xy: 57, 232
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+coin-big2
+  rotate: false
+  xy: 109, 232
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+coin-big3
+  rotate: false
+  xy: 1, 91
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+coin-big4
+  rotate: false
+  xy: 1, 39
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+item-slot
+  rotate: false
+  xy: 187, 386
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+lazer1
+  rotate: false
+  xy: 159, 320
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+lazer2
+  rotate: false
+  xy: 193, 320
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+pointer
+  rotate: false
+  xy: 159, 286
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
+lazer3
+  rotate: false
+  xy: 161, 220
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+lazer4
+  rotate: false
+  xy: 195, 220
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+coin-small1
+  rotate: false
+  xy: 1, 1
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+battery-icon
+  rotate: false
+  xy: 235, 484
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+coin-icon
+  rotate: false
+  xy: 235, 462
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+mob-icon
+  rotate: false
+  xy: 235, 440
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+coin-small2
+  rotate: false
+  xy: 57, 194
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+coin-small3
+  rotate: false
+  xy: 95, 194
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+coin-small4
+  rotate: false
+  xy: 49, 156
+  size: 36, 36
+  orig: 36, 36
+  offset: 0, 0
+  index: -1
+circle
+  rotate: false
+  xy: 87, 160
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

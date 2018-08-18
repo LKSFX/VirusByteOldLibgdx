@@ -1,0 +1,313 @@
+
+pepperbros-boss.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+newboss-lifebar
+  rotate: false
+  xy: 1, 680
+  size: 54, 340
+  orig: 54, 340
+  offset: 0, 0
+  index: -1
+storm-gaussian1
+  rotate: false
+  xy: 57, 825
+  size: 168, 195
+  orig: 168, 195
+  offset: 0, 0
+  index: -1
+storm-gaussian2
+  rotate: false
+  xy: 227, 825
+  size: 168, 195
+  orig: 168, 195
+  offset: 0, 0
+  index: -1
+storm-dizzy1
+  rotate: false
+  xy: 397, 834
+  size: 158, 186
+  orig: 158, 186
+  offset: 0, 0
+  index: -1
+storm-dizzy2
+  rotate: false
+  xy: 557, 834
+  size: 158, 186
+  orig: 158, 186
+  offset: 0, 0
+  index: -1
+storm-charge1
+  rotate: false
+  xy: 717, 840
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+mydoom-gaussian1
+  rotate: false
+  xy: 57, 659
+  size: 168, 164
+  orig: 168, 164
+  offset: 0, 0
+  index: -1
+mydoom-gaussian2
+  rotate: false
+  xy: 227, 659
+  size: 168, 164
+  orig: 168, 164
+  offset: 0, 0
+  index: -1
+storm-charge2
+  rotate: false
+  xy: 397, 652
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+storm-charge3
+  rotate: false
+  xy: 553, 652
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+storm-iddle1
+  rotate: false
+  xy: 1, 477
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+storm-iddle2
+  rotate: false
+  xy: 1, 295
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+storm-shot
+  rotate: false
+  xy: 157, 477
+  size: 154, 180
+  orig: 154, 180
+  offset: 0, 0
+  index: -1
+mydoom-dizzy1
+  rotate: false
+  xy: 1, 139
+  size: 158, 154
+  orig: 158, 154
+  offset: 0, 0
+  index: -1
+mydoom-dizzy2
+  rotate: false
+  xy: 157, 321
+  size: 158, 154
+  orig: 158, 154
+  offset: 0, 0
+  index: -1
+mydoom-charge1
+  rotate: false
+  xy: 161, 169
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+combo-icon
+  rotate: false
+  xy: 873, 961
+  size: 150, 59
+  orig: 150, 59
+  offset: 0, 0
+  index: -1
+mydoom-charge2
+  rotate: false
+  xy: 313, 500
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+mydoom-charge3
+  rotate: false
+  xy: 469, 500
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+mydoom-iddle1
+  rotate: false
+  xy: 317, 348
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+mydoom-iddle2
+  rotate: false
+  xy: 317, 196
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+mydoom-shot
+  rotate: false
+  xy: 473, 348
+  size: 154, 150
+  orig: 154, 150
+  offset: 0, 0
+  index: -1
+dizzy1
+  rotate: false
+  xy: 1, 62
+  size: 100, 75
+  orig: 100, 75
+  offset: 0, 0
+  index: -1
+dizzy2
+  rotate: false
+  xy: 873, 884
+  size: 100, 75
+  orig: 100, 75
+  offset: 0, 0
+  index: -1
+pepper-rocket-gaussian1
+  rotate: false
+  xy: 625, 570
+  size: 41, 80
+  orig: 41, 80
+  offset: 0, 0
+  index: -1
+pepper-rocket-gaussian2
+  rotate: false
+  xy: 473, 266
+  size: 41, 80
+  orig: 41, 80
+  offset: 0, 0
+  index: -1
+pepper-rocket-gaussian3
+  rotate: false
+  xy: 516, 266
+  size: 41, 80
+  orig: 41, 80
+  offset: 0, 0
+  index: -1
+newboss-head
+  rotate: false
+  xy: 1, 1
+  size: 54, 59
+  orig: 54, 59
+  offset: 0, 0
+  index: -1
+pepper-bomb-gaussian1
+  rotate: false
+  xy: 103, 83
+  size: 53, 54
+  orig: 53, 54
+  offset: 0, 0
+  index: -1
+pepper-bomb-gaussian2
+  rotate: false
+  xy: 473, 210
+  size: 53, 54
+  orig: 53, 54
+  offset: 0, 0
+  index: -1
+pepper-bomb-gaussian3
+  rotate: false
+  xy: 559, 292
+  size: 53, 54
+  orig: 53, 54
+  offset: 0, 0
+  index: -1
+pepper-rocket1
+  rotate: false
+  xy: 975, 888
+  size: 31, 71
+  orig: 31, 71
+  offset: 0, 0
+  index: -1
+pepper-rocket2
+  rotate: false
+  xy: 668, 579
+  size: 31, 71
+  orig: 31, 71
+  offset: 0, 0
+  index: -1
+pepper-bomb1
+  rotate: false
+  xy: 57, 16
+  size: 43, 44
+  orig: 43, 44
+  offset: 0, 0
+  index: -1
+pepper-bomb2
+  rotate: false
+  xy: 873, 838
+  size: 43, 44
+  orig: 43, 44
+  offset: 0, 0
+  index: -1
+pepper-bomb3
+  rotate: false
+  xy: 918, 838
+  size: 43, 44
+  orig: 43, 44
+  offset: 0, 0
+  index: -1
+smoke1
+  rotate: false
+  xy: 625, 525
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+pepper-rocket3
+  rotate: false
+  xy: 528, 193
+  size: 31, 71
+  orig: 31, 71
+  offset: 0, 0
+  index: -1
+smoke2
+  rotate: false
+  xy: 161, 124
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+smoke3
+  rotate: false
+  xy: 206, 124
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+smoke4
+  rotate: false
+  xy: 251, 124
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+smoke5
+  rotate: false
+  xy: 158, 79
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+smoke6
+  rotate: false
+  xy: 203, 79
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1
+smoke7
+  rotate: false
+  xy: 248, 79
+  size: 43, 43
+  orig: 43, 43
+  offset: 0, 0
+  index: -1

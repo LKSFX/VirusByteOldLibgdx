@@ -1,0 +1,11 @@
+{
+com.badlogic.gdx.graphics.Color: {
+	white: { r: 1, g: 1, b: 1, a: 1 }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	folder-icon: { name: folderIcon, color: white },
+	home-icon: { name: homeIcon, color: white },
+	arrow-icon: { name: arrowIcon, color: white },
+	restart-icon: { name: restartIcon, color: white }
+}
+}

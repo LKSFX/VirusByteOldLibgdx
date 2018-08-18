@@ -1,0 +1,565 @@
+package com.lksfx.virusByte.gameObject;
+
+import java.util.Iterator;
+
+import static com.lksfx.virusByte.gameControl.debug.Debug.debug;
+
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.lksfx.virusByte.VirusByteGame;
+import com.lksfx.virusByte.effects.Particles;
+import com.lksfx.virusByte.gameControl.ObjectsManager;
+import com.lksfx.virusByte.gameControl.debug.Debug;
+import com.lksfx.virusByte.gameObject.abstractTypes.ItemType;
+import com.lksfx.virusByte.gameObject.abstractTypes.VirusType;
+import com.lksfx.virusByte.gameObject.abstractTypes.VirusType.VirusConfig;
+import com.lksfx.virusByte.gameObject.itemObject.AntivirusItem;
+import com.lksfx.virusByte.gameObject.itemObject.BombItem;
+import com.lksfx.virusByte.gameObject.itemObject.LifeItem;
+import com.lksfx.virusByte.gameObject.itemObject.SawItem;
+import com.lksfx.virusByte.gameObject.virusObject.BotVirus;
+import com.lksfx.virusByte.gameObject.virusObject.EnergyzerVirus;
+import com.lksfx.virusByte.gameObject.virusObject.InfectorVirus;
+import com.lksfx.virusByte.gameObject.virusObject.PlagueVirus;
+import com.lksfx.virusByte.gameObject.virusObject.PsychoVirus;
+import com.lksfx.virusByte.gameObject.virusObject.ShockBotVirus;
+import com.lksfx.virusByte.gameObject.virusObject.SpywareVirus;
+import com.lksfx.virusByte.gameObject.virusObject.TrojanVirus;
+import com.lksfx.virusByte.gameObject.virusObject.WormVirus;
+
+public class VirusManager implements ObjectsManager {
+	private Vector3 mousePos = new Vector3();
+	private final boolean DEBUG = false, SCREEN_DEBUG = true;
+	
+	public static Particles effect;
+	public PointsManager pointsManager;
+	public int totalVirusDestroyed = 0, stage = 1;
+	
+	public InputAdapter normalInputs;
+	public GestureDetector gestureInputs;
+	
+	public static Array<Array<VirusType>> VIRUS_SET;
+	public Array<VirusType> genericArray, drawArray;
+	
+	public VirusManager() {
+		
+		genericArray = new Array<VirusType>(); //for objects that rarely spawn, this saves unnecessary pools and arrays in the main ENUMERATOR.
+		drawArray = new Array<VirusType>();
+		
+		VIRUS_SET = new  Array<Array<VirusType>>() {{
+			for (VirusInstance virus : VirusInstance.values()) {
+				add(virus.array);
+			}
+			add( genericArray );
+		}}; 
+		
+		effect = new Particles();
+		pointsManager = new PointsManager(VirusByteGame.HUD, VirusByteGame.VIEWPORT, this);
+		
+		/*>>>>>>>>>>>>>>>>>>>>>>Set inputs controllers>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+		gestureInputs = new GestureDetector(new GestureAdapter() {
+			@Override
+			public boolean fling(float velocityX, float velocityY, int button) {
+				return flingTrigger( velocityX, velocityY, button );
+			}
+			
+			@Override
+			public boolean tap(float x, float y, int count, int button) {
+				if (button == Buttons.LEFT) {
+					if (doubleTapTrigger(x, y)) return true;
+					return tapTrigger(x, y);
+				}
+				return false;
+			}
+			
+		});
+		
+		normalInputs = new InputAdapter() {
+			@Override
+			public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+				releaseTrigger(screenX, screenY);
+				return false;
+			}
+			@Override
+			public boolean touchDragged(int screenX, int screenY, int pointer) {
+				draggedTrigger(screenX, screenY);
+				return false;
+			}
+			@Override
+			public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+				if (button == Buttons.LEFT) {
+					pressedTrigger(screenX, screenY);
+				}
+				return false;
+			}
+		};
+		//gestureDetector.setTapCountInterval(0.8f); //set tap count interval
+		gestureInputs.setTapSquareSize(100f);
+		
+		VirusByteGame.addProcessor(normalInputs);
+		VirusByteGame.addProcessor(gestureInputs);
+		/*<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<*/
+		
+	}
+	
+	public enum VirusInstance { 
+//		Octocat("octocat", new Array<VirusType>(), new VirusPool(2, 4, OctocatBoss.class), 3, 6, false),
+		Bomb("bomb", new Array<VirusType>(), new VirusPool(3, 5, BombItem.class), 2, 2, true), 
+		Saw("saw", new Array<VirusType>(), new VirusPool(3, 5, SawItem.class), 3, 5, true), 
+		Life("life", new Array<VirusType>(), new VirusPool(2, 4, LifeItem.class), 10, 10, true),
+		
+		Plague("plague", new Array<VirusType>(), new VirusPool(2, 4, PlagueVirus.class), 3, 6, true), 
+		Energyzer("energyzer", new Array<VirusType>(), new VirusPool(2, 4, EnergyzerVirus.class), 2, 4, true), 
+		Infector("infector", new Array<VirusType>(), new VirusPool(2, 4, InfectorVirus.class), 3, 5, true), 
+		Psycho("psycho", new Array<VirusType>(), new VirusPool(2, 4, PsychoVirus.class), 3, 5, true),
+		
+		Bot("bot", new Array<VirusType>(), new VirusPool(2, 4, BotVirus.class), 6, 5, true),
+		Spyware("spyware", new Array<VirusType>(), new VirusPool(2, 4, SpywareVirus.class), 1, 5, true),
+		Shockbot("shockbot", new Array<VirusType>(), new VirusPool(10, 20, ShockBotVirus.class), 20, 20, true),
+		Worm("worm", new Array<VirusType>(), new VirusPool(2, 4, WormVirus.class), 3, 5, true),
+		Trojan("trojan", new Array<VirusType>(), new VirusPool(2, 4, TrojanVirus.class), 1, 5, true),
+		
+		Antivirus("antivirus", new Array<VirusType>(), new VirusPool(2, 3, AntivirusItem.class), 2, 3, true);
+		
+		public String name;
+		public Class<? extends VirusType> type;
+		public Array<VirusType> array;
+		public VirusPool pool;
+		public boolean use_pool;
+		public int spawnLimit, totalMaxSpawnLimit;
+		
+		public static final int lenght = values().length;
+		public static final VirusInstance[] randomInstances = new VirusInstance[] {Plague, Energyzer, Infector, Psycho, Worm},
+				normalInstances = new VirusInstance[] {Plague, Energyzer, Infector, Psycho}, 
+				premiumInstances = new VirusInstance[] {Plague, Energyzer, Infector, Psycho, Worm, Bot, Spyware};
+		
+		private VirusInstance(String name, Array<VirusType> array, VirusPool pool, int spawnLimit, int totalMaxSpawnLimit, boolean use_pool) {
+			this.use_pool = use_pool;
+			this.name = name;
+			this.array = array;
+			this.pool = pool;
+			this.type = pool.type;
+			this.spawnLimit = spawnLimit;
+			this.totalMaxSpawnLimit = totalMaxSpawnLimit;
+		}
+		
+		public VirusType obtain() {
+//			if (getSize() > 10) return null; //limit of virus in swarm
+			//if (array.size > spawnLimit) return null;
+			if (array.size < spawnLimit) {
+				if (use_pool && pool != null) return pool.obtain();
+				try {
+					return ClassReflection.newInstance(type); // old form (type.newInstance();)
+				} catch (ReflectionException ex) {ex.printStackTrace();}
+			}
+			return null;
+		}
+		
+		public static void stagePass() {
+			/*for (VirusInstance it : values()) {
+				it.spawnLimit = Math.min(it.spawnLimit+1, it.totalMaxSpawnLimit); //increment number of spawn limit
+			}*/
+		}
+		
+		public static VirusInstance getEnum(VirusType virus) {
+			for (VirusInstance virusCheck : values()) {
+				if ( virusCheck.type.equals(virus.getClass()) ) return virusCheck;
+			}
+			return null;
+		}
+		
+		public static void clearAll() {
+			for (VirusInstance obj : values()) {
+				obj.pool.freeAll(obj.array);
+				obj.pool.clear();
+				obj.array.clear();
+			}
+			
+		}
+		
+		public static void initialize() {
+			clearAll();
+			for (VirusInstance obj : values()) {
+				obj.pool.clear();
+			}
+		}
+	}
+	
+	@Override
+	public void update(SpriteBatch batch, BitmapFont font, Vector3 mousePos, float deltaTime) {
+		
+		for (int i = 0; i < VIRUS_SET.size; i++ ) 
+		{
+			if (VIRUS_SET.get(i).size > 0) 
+			{
+				// ================================= //
+				Iterator<VirusType> virus = VIRUS_SET.get(i).iterator();
+				while (virus.hasNext()) 
+				{
+					VirusType current = virus.next();
+					
+					if ( current.alive ) 
+					{
+						current.update(deltaTime);
+					} else {
+						if (current.finale == true) {
+							pointsManager.addPoint(current.getPointLog());
+							effect.createEffect(current.finalEffectType(), current.position.x, current.position.y);
+							
+							if (!(current instanceof ItemType)) {
+								totalVirusDestroyed++; //increment total enemies defeats
+								if ( totalVirusDestroyed > 20*stage ) stage++;
+								VirusByteGame.BACK.setBackColor(); //change background color only when is a death virus
+							}
+						} else if ( current.toRemove ) {
+							//remove this object silently from the stage
+							current.toRemove = false; //reset field to re-use.
+						} else {
+							if ( !current.reached ) { //not reached to the end of screen
+								if (current instanceof ItemType) {
+									ItemType item = (ItemType)current;
+									Debug.log("Object Item captured!");
+									VirusByteGame.ITEM_MANAGER.captureItem( item.getItem(item.position.x, item.position.y) );
+								}
+							}
+						}
+						virus.remove();
+						drawArray.removeValue(current, true); // remove from draw array
+						if ( current.canBeFree ) freeVirusBackToPool( current );
+					}
+				}
+				// ================================== //
+			}
+		}
+		//draw object on screen
+		draw(batch, deltaTime);
+		
+		effect.show(batch, deltaTime, mousePos);
+		pointsManager.update(batch, font, deltaTime);
+		if ( SCREEN_DEBUG ) {
+			debug.screen("Total Virus: " + getSize(), 10, 300);
+			debug.screen("Virus destroyed: " + totalVirusDestroyed, 10, 320);
+			debug.screen("Items on hand: " + VirusByteGame.ITEM_MANAGER.items.size, 10, 340);
+			debug.screen("total generic virus: " + genericArray.size, 10, 360);
+			debug.screen("total objects in the draw array " + drawArray.size, 10, 380);
+		}
+	}
+	
+	public void freeVirusBackToPool(VirusType currentVirus) {
+		VirusInstance virusInfo = VirusInstance.getEnum( currentVirus );
+		if(virusInfo != null) {
+			if (virusInfo.use_pool && virusInfo.pool != null) {
+				Debug.log("virus free " + virusInfo.name);
+				virusInfo.pool.free( currentVirus ); //release virus back to pool
+			}
+		}
+	}
+	
+	/** draw everything */
+	public void draw(SpriteBatch batch, float deltaTime) {
+		if ( drawArray.size == 0 ) return;
+		/*drawArray.clear();
+		for (int i = 0; i < VIRUS_SET.size; i++) {
+			Array<VirusType> set = VIRUS_SET.get(i);
+			if (set.size > 0) drawArray.addAll( set );
+		}*/
+		drawArray.sort();
+		
+		for (int i = 0; i < drawArray.size; i++) {
+			drawArray.get( i ).draw(batch, deltaTime);
+		}
+	}
+	
+	/**remove all virus from updateArray and drawArray*/
+	public void clearAll() {
+		clearAll(null);
+	}
+	
+	/**removes all virus from updateArray and drawArray
+	 * @param type if specified remove only the correspondent type of virus, when null remove all
+	 * */
+	public void clearAll(Class<? extends VirusType> type) {
+		
+		if (type != null) {
+			//removing only a specific type of virus from update and draw array 
+			for (int i = 0; i < VIRUS_SET.size; i++) {
+				if (VIRUS_SET.get(i).size == 0) continue;
+				Iterator<VirusType> set = VIRUS_SET.get(i).iterator();
+				// == //
+				while (set.hasNext()) {
+					VirusType virus = set.next();
+					if ( type.isInstance(virus) ) {
+						drawArray.removeValue(virus, true); //remove from the draw array
+						set.remove(); //remove from update array
+					}
+				}
+				// == //
+			}
+			// ============================================ //
+			return;
+		}
+		// removing all virus from all update and draw array
+		for (int i = 0; i < VIRUS_SET.size; i++) VIRUS_SET.get(i).clear(); //remove from update array
+		drawArray.clear(); // clear the draw array 
+	}
+	
+	/** return the total of virus in the main virus array */
+	public static int getSize() {
+		int val = 0;
+		for (Array<VirusType> virusArray : VIRUS_SET) {
+			val += virusArray.size;
+		} 
+		return val;
+	}
+	
+	public int getSize(VirusInstance type) {
+		return getSize(type, false);
+	} 
+	
+	public int getSize(VirusInstance type, boolean blinds) {
+		int total = 0;
+		for (int i = 0; i < type.array.size; i++) if (type.array.get(i).blind == blinds) total++;
+		//int val = type.array.size;
+		return total;
+	}
+	
+	/** return if the item or virus is on the scene */
+	public boolean contains(VirusType virus, boolean identity) {
+		boolean result = false;
+		for (Array<VirusType> virusArray : VIRUS_SET) {
+			result = virusArray.contains(virus, identity);
+			if ( result == true ) break;
+		}
+		return result;
+	}
+	
+	// ====================================== //
+	// == REMOVE SOME ITEM OBJECT THE SCENE = //
+	// ====================================== //
+	
+	/**remove objects of the same specified instance class
+	 * @return total removed objects*/
+	public int removeAllObjectsOfType(VirusType type) {
+		int totalRemoved = 0;
+		
+		for (int i = 0; i < VIRUS_SET.size; i++) {
+			for (int j = 0; j < VIRUS_SET.get(i).size; j++) {
+				VirusType obj = VIRUS_SET.get(i).get(j);
+				if ( obj.equals( type ) ) {
+					obj.removeFromStage();
+					totalRemoved++;
+				}
+			}
+		}
+		
+		return totalRemoved;
+	}
+	
+	/**remove objects of the specified VirusInstace type
+	 * @return total removed objects*/
+	public int removeAllObjectsOfType(VirusInstance type) {
+		if (type.array.size == 0 ) return 0;
+		int totalRemoved = type.array.size;
+		
+		for (int i = 0; i < type.array.size; i++) {
+			type.array.get(i).removeFromStage();
+		}
+		
+		return totalRemoved;
+	}
+	
+	// ====================================== //
+	// ====================================== //
+	// ====================================== //
+	/**insert the virus inside a respective array to updates and render operations*/
+	public void joinVirus(VirusType virus) {
+		boolean inserted = false;
+		for (VirusInstance virusSet : VirusInstance.values()) {
+			if (virusSet.type.equals( virus.getClass() )) {
+				virusSet.array.add( virus );
+				inserted = true;
+				break;
+			}
+		}
+		if ( !inserted ) genericArray.add(virus);
+		drawArray.add( virus ); //insert virus to the draw array
+	}
+	
+	private VirusType getVirus(VirusInstance... types) {
+		VirusType virus = null;
+		virus = types[MathUtils.random(0, types.length-1)].obtain();
+		return virus;
+	}
+	
+	public static String getVirusName(VirusType virus) {
+		String name = "";
+		name = VirusInstance.getEnum(virus).name;
+		return name != null ? name: "";
+	}
+	
+	/*========================================Add a new virus on the screen===============================================*/
+	public VirusType addVirus() {
+		return addVirus(VirusInstance.randomInstances);
+	}
+	/** add and return virus */
+	public VirusType addVirus(VirusInstance... types) {
+		VirusType virus = getVirus(types);
+		if (virus != null) {
+			virus.resetInPosition();
+			if (virus instanceof BotVirus) {
+				if (getSize(VirusInstance.Bot, virus.blind) > 2) return null;
+			}
+			joinVirus( virus ); //insert virus inside an array
+			if ( DEBUG ) {
+				VirusInstance virusInfo = VirusInstance.getEnum(virus);
+				Debug.log(virusInfo.name + "Pool >> Active: " + virusInfo.array.size + " | Free: " + virusInfo.pool.getFree() + " | Peak: " + virusInfo.pool.peak +"/" + virusInfo.pool.max);
+			}
+		}
+		return virus;
+	}
+	
+	public VirusType addVirus(float posX, float posY, VirusInstance type, VirusConfig config) {
+		VirusType virus = getVirus(type);
+		return addVirus(posX, posY, virus, config);
+	}
+	
+	public VirusType addVirus(float posX, float posY, VirusInstance... type) {
+		VirusType virus = getVirus(type);
+		return (virus == null) ? null : addVirus(posX, posY, virus, virus.getConfig());
+	}
+	
+	/** add a virus object to the stage */
+	public VirusType addVirus(VirusType virus) {
+		if (virus != null) {
+			virus.resetInPosition();
+			joinVirus( virus ); // insert the virus inside an array
+		}
+		return virus;
+	}
+	
+	/** add a virus object to the stage */
+	public VirusType addVirus(float posX, float posY, VirusType virus) {
+		return addVirus(posX, posY, virus, virus.getConfig());
+	}
+	
+	/** add a virus object to the stage */
+	public VirusType addVirus(float posX, float posY, VirusType virus, VirusConfig config) {
+		if (virus != null) {
+			virus.resetInPosition(posX, posY, config);
+			joinVirus(virus);
+		}
+		return virus;
+	}
+	
+	/*================================================================================================================*/
+	
+	private Viewport getViewport() {
+		return VirusByteGame.VIEWPORT;
+	}
+	
+	/*====================Triggers======================*/
+	private boolean tapTrigger(float x, float y) {
+		mousePos.set(x, y, 0);
+		getViewport().unproject(mousePos);
+		//Debug.log("screenX: " + x + " screenY: " + y + " worldX: " + mousePos.x + " worldY: " + mousePos.y);
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			if ( drawArray.get(i).justTouched(mousePos) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean flingTrigger(float velocityX, float velocityY, int button) {
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			if ( drawArray.get(i).flingTouch(velocityX, velocityY, button) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean draggedTrigger(float x, float y) {
+		mousePos.set(x, y, 0);
+		getViewport().unproject(mousePos);
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			drawArray.get(i).draggedTouch(mousePos);
+		}
+		
+		if (!VirusType.HOLDING_VIRUS) {
+			WormVirus.SLASH.set(mousePos.x, mousePos.y);
+			SpywareVirus.SLASH.set(mousePos.x, mousePos.y);
+		}
+		
+		return false;
+	}
+	
+	private boolean pressedTrigger(float x, float y) {
+		mousePos.set(x, y, 0);
+		getViewport().unproject(mousePos);
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			drawArray.get(i).pressedTouch(mousePos);
+		}
+		
+		WormVirus.SLASH_ORIGIN.set(mousePos.x, mousePos.y);
+		WormVirus.SLASH.set(mousePos.x, mousePos.y);
+		SpywareVirus.SLASH_ORIGIN.set(mousePos.x, mousePos.y);
+		SpywareVirus.SLASH.set(mousePos.x, mousePos.y);
+		
+		return false;
+	}
+	
+	public void releaseTrigger(float x, float y) {
+		mousePos.set(x, y, 0);
+		getViewport().unproject(mousePos);
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			drawArray.get(i).releaseTouch(mousePos);
+		}
+		
+		WormVirus.SLASH.setZero();
+		WormVirus.SLASH_ORIGIN.setZero();
+		SpywareVirus.SLASH.setZero();
+		SpywareVirus.SLASH_ORIGIN.setZero();
+	}
+	
+	private boolean doubleTapTrigger(float x, float y) {
+		mousePos.set(x, y, 0);
+		getViewport().unproject(mousePos);
+		
+		for (int i = drawArray.size-1; i >= 0; i--) {
+			if ( drawArray.get(i).doubleTouch(mousePos) ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	/*=====================================================*/
+	/** Need be called every time the game is in pause screen */
+	public void pauseManager() {
+		VirusByteGame.MAIN_MULTIPLEX_CONTROLLER.removeProcessor(normalInputs);
+		VirusByteGame.MAIN_MULTIPLEX_CONTROLLER.removeProcessor(gestureInputs);
+	}
+	/** Need be called when the game is un-paused */
+	public void unpauseManager() {
+		VirusByteGame.addProcessor(normalInputs);
+		VirusByteGame.addProcessor(gestureInputs);
+	}
+}

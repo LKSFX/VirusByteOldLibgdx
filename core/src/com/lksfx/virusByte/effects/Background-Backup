@@ -1,0 +1,640 @@
+package com.lksfx.virusByte.effects;
+
+import java.util.Iterator;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
+import com.lksfx.virusByte.VirusByteGame;
+import com.lksfx.virusByte.effects.AnimatedSpriteBackground.AnimatedSpriteBackConfig;
+import com.lksfx.virusByte.gameControl.Assets;
+import com.lksfx.virusByte.gameControl.Debug;
+import com.lksfx.virusByte.gameControl.MyUtils;
+
+public class Backgrounds {
+	public Texture background; 
+	public Sprite tileBack, spriteBack, hide_background1, genericScreenSizeSprite;
+	public Color backColor;
+	public BackRender circuitBackground, colorBackground, hide_background;
+	
+	public enum Mode {
+		MENU("main menu"), GAMESCREEN("Game mode");
+		
+		String menuName;
+		String pass;
+		
+		private Mode(String menuName) {
+			this.menuName = menuName;
+		}
+	}
+	
+	private float worldWidth, worldHeight;
+	private ShaderProgram shader;
+	private Array<BackRender> backgrounds, foregrounds;
+	private String circuitTexture = Assets.Textures.circuitTexture.path, hiddenTexture = Assets.Textures.allSeeingEye.path;
+	
+	public Backgrounds(SpriteBatch batch) {
+		worldWidth = VirusByteGame.VIEWPORT.getWorldWidth();
+		worldHeight = VirusByteGame.VIEWPORT.getWorldHeight();
+		backgrounds = new Array<BackRender>(); // this array store all the background objects to render
+		foregrounds = new Array<BackRender>(); //this array store all the foregrounds objects to render
+		genericScreenSizeSprite = makeSpriteShape(worldWidth+100f, worldHeight);
+		boolean hasToLoadAssets = false;
+		// === load necessary assets === //
+		if ( !Assets.manager.isLoaded(circuitTexture, Texture.class) ) {
+			Assets.manager.load(circuitTexture, Texture.class); 
+			hasToLoadAssets = true;
+		}
+		
+		if ( !Assets.manager.isLoaded(hiddenTexture, Texture.class) ) {
+			Assets.manager.load(hiddenTexture, Texture.class); 
+			hasToLoadAssets = true;
+		}
+		
+		if (hasToLoadAssets) {
+			Debug.log("the background images has been loaded.");
+			Assets.manager.finishLoading();
+		}
+		
+		// ===                      === //
+		background = Assets.manager.get(circuitTexture, Texture.class); //load background texture
+		hide_background1 = new Sprite(Assets.manager.get(hiddenTexture, Texture.class), 0, 0, 480, 640); //hide image 
+//		hide_background1.setAlpha(0.15f);
+		background.setWrap(TextureWrap.Repeat, TextureWrap.Repeat); //set this texture to wrap repeatedly
+		spriteBack = new Sprite(background, 0, 0, 1024, 1024);
+		backColor = new Color(125f/255f, 245/255f, 125f/255f, 0.9f);
+		shader = new ShaderProgram(Gdx.files.internal("data/shaders/customShader.vsh"), Gdx.files.internal("data/shaders/customShader.fsh"));
+		Debug.log(shader.isCompiled() ? "custom shaders has compiled!!" : shader.getLog());
+		ShaderProgram.pedantic = false;
+		shader.begin();
+		shader.setUniformf("u_resolution", Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		shader.end();
+		
+		spriteBack.setAlpha(0.9f);
+		tileBack = new Sprite( genericScreenSizeSprite );
+		tileBack.setColor(backColor);
+		
+		circuitBackground =  new BackRender(spriteBack, 0, 0, 5, false);
+		colorBackground = new BackRender(tileBack, 0, 0, 10, false);
+		hide_background = new BackRender(hide_background1, 0, 0, 0, false);
+		//create and add the three main backgrounds to the back array
+		addBackground( colorBackground );
+		addBackground( circuitBackground );
+		addBackground( hide_background );
+		if (hide_background != null) hide_background.setPosition((VirusByteGame.VIEWPORT.getWorldWidth()*.5f)-(hide_background1.getWidth()*.5f), 0);
+		circuitBackground.lengthV = .8f; //set the vertical draw range
+		circuitBackground.lengthU = .9f; //set the horizontal draw range
+		
+		setBackColor();
+		/*for (Mode val : Mode.values())
+			Debug.log("Modes: "+ val.menuName);*/
+	}
+	
+	public void update(SpriteBatch batch, float deltaTime) {
+		//update stage
+		int gameStage = VirusByteGame.VIRUS_MANAGER.stage;
+		if (stage != gameStage) {
+			circuitBackground.scrollSpeedV = .025f * gameStage;
+			stage = gameStage;
+			
+		}
+		
+		renderBackgrounds(batch, deltaTime);
+		
+		displayTimer += deltaTime;
+		
+		//hide_background1.draw(batch);
+		//make/show a especial background animation
+		if (stage >= 1 && displayTimer >= espBackDisplayTime) {
+			if (especialRandomBackground) randomBackground();
+			espBackDisplayTime = displayTimer+(10f+MathUtils.random(40f)); //interval between show back/foreground effects
+		}
+		
+		if (Gdx.input.isKeyJustPressed(Keys.E) /*|| (Gdx.app.getType() == ApplicationType.Android && Gdx.input.justTouched() )*/ ) {
+			/*BackRender back;
+			VirusByteGame.BACK.addBackground(back = new Backgrounds.BackRender(Assets.Textures.binaryTex, 0, 0, 15, true) ); // add background
+			back.setAlphaAttribute(.65f, .005f);
+			back.setSize(worldWidth, worldHeight);*/
+			//addForeground( new ForeEffectRender(makeSpriteShape(worldWidth, worldHeight), Effect.lazer, 1f, 1) );
+			BackRender back;
+			AnimatedSpriteBackConfig config = new AnimatedSpriteBackConfig(true, 1/15f);
+			addForeground(back = new BackRender(Assets.Atlas.hypoA, new String[] {"hypoA1" ,"hypoA2", "hypoA3", "hypoA4"}, 0, 5f, 15, false, config) );
+			back.setAlphaAttribute(.9f, .001f);
+			back.setTextureBrowser(.1f, .2f);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.I)) {
+			//debug information
+			if (loadedAssets.size > 0) {
+				for (String assetName : loadedAssets) {
+					Debug.log("asset name: " + assetName + " | total references: " + Assets.manager.getReferenceCount(assetName));
+				}
+			}
+		}
+		if ( Gdx.input.isKeyJustPressed(Keys.C) ) setBackColor();
+		//if (buffer_font != null) buffer_font.draw(batch, "00010101", 10f, 50f); // test buffer font
+//		Debug.debug.screen("total backgrounds to render is " + backgrounds.size, 10, 120);
+//		Debug.debug.screen("total foregrounds to render is " + foregrounds.size, 10, 140);
+	}
+	
+	/** when the especial random background is active random backgrounds are randomly showed during the game */
+	public boolean especialRandomBackground = true; // this var is pre activated
+	public BackRender espBackRender; //can be accessed by any where
+	private float displayTimer, espBackDisplayTime = MathUtils.random(50f);
+	//effects
+	private String[] hypo = new String[] {"hypoA1" ,"hypoA2", "hypoA3", "hypoA4"},
+			hex = new String[] {"hex1" ,"hex2", "hex3", "hex4", "hex5", "hex6"},
+			ilu = new String[] {"ilu1" ,"ilu2", "ilu3", "ilu4", "ilu5", "ilu6", "ilu7"},
+			way = new String[] {"way1" ,"way2", "way3", "way4"},
+			box = new String[] {"box1" ,"box2", "box3", "box4"},
+			dark = new String[] {"dark-D1" ,"dark-D2", "dark-D3", "dark-D4"},
+			rainbow = new String[] {"RB1" ,"RB2", "RB3", "RB4", "RB5", "RB6", "RB6", "RB7", "RB8"};
+	private Array<String[]> back_effects = new Array<String[]>() {{
+		add(hypo);
+		add(ilu);
+		add(hex);
+		add(way);
+		add(box);
+		add(dark);
+		add(rainbow);
+	}}, front_effects = new Array<String[]>() {{
+		add(hypo);
+		add(dark);
+	}};
+	
+	private int stage;
+	
+	/** generate and add a random back/foreground animation to display */
+	public void randomBackground() {
+		if (espBackRender != null && espBackRender.active) return; 
+		AnimatedSpriteBackConfig config = new AnimatedSpriteBackConfig(true, 1/15f); //set animation speed
+		boolean fg = stage < 6 ? false : MathUtils.randomBoolean(.5f);
+		if (fg) {
+			espBackRender = new BackRender(Assets.Atlas.hypoA, front_effects.get(MathUtils.random(front_effects.size-1)), 0, 5f+MathUtils.random(15f), 15, true, config);
+			addForeground( espBackRender );
+		} else {
+			espBackRender = new BackRender(Assets.Atlas.hypoA, back_effects.get(MathUtils.random(back_effects.size-1)), 0, 5f+MathUtils.random(15f), 15, true, config);
+			addBackground( espBackRender );
+		}
+		espBackRender.setAlphaAttribute(.9f, MathUtils.random(.005f) );
+		espBackRender.setTextureBrowser( MathUtils.random(-.3f, .3f), MathUtils.random(-.3f, .3f) );
+	}
+	
+	/** render all backgrounds in order of depth */
+	private void renderBackgrounds(SpriteBatch batch, float deltaTime) {
+		if (backgrounds.size == 0) return;
+		//batch.setShader(shader);
+		Iterator<BackRender> back = backgrounds.iterator();
+		while (back.hasNext()) {
+			BackRender render = back.next();
+			if (!render.active) {
+				back.remove();
+				continue;
+			}
+			render.draw(batch, deltaTime);
+		}
+		//batch.setShader(null);
+	}
+	
+	/** render all foreground in order of depth */
+	public void renderForegrounds(SpriteBatch batch, float deltaTime) {
+		if (foregrounds.size == 0) return;
+		Iterator<BackRender> back = foregrounds.iterator();
+		while (back.hasNext()) {
+			BackRender render = back.next();
+			if (!render.active) {
+				back.remove();
+				continue;
+			}
+			render.draw(batch, deltaTime);
+		}
+	}
+	
+	/// =====================================================================  ////
+	/// ========================== ADD and REMOVE ===========================  ////
+	/// =====================================================================  ////
+	private Array<String> loadedAssets = new Array<String>();
+	
+	/** add a background object texture to render */
+	public void addBackground(BackRender background) {
+		backgrounds.add(background);
+		backgrounds.sort(); // order by depth
+		if (background.assetPatch != null) loadedAssets.add(background.assetPatch); //add the background loaded texture asset to the list
+	}
+	
+	public BackRender addForeground(Effect effectType, float duration, int depth) {
+		return addForeground( new ForeEffectRender(genericScreenSizeSprite, effectType, duration, depth) );
+	}
+	
+	/** add a foreground object texture to render */
+	public BackRender addForeground(BackRender foreground) {
+		foregrounds.add(foreground);
+		foregrounds.sort();
+		if (foreground.assetPatch != null) loadedAssets.add(foreground.assetPatch); //add the foreground loaded texture asset to the list
+		return foreground;
+	}
+	
+	public void removeBackground() {}
+	
+	public void removeForeground() {}
+	
+	public boolean unloadBackgroundTextureAssets(String assetName) {
+		if ( Assets.manager.isLoaded(assetName) ) Assets.manager.unload(assetName);
+		return loadedAssets.removeValue(assetName, false);
+	}
+	/// =====================================================================  ////
+	/// =====================================================================  ////
+	
+	/**
+	 * BackRender is a class used to draw everything in the background or foreground
+	 * @author LKSFX
+	 */
+	public static class BackRender implements Comparable<BackRender> {
+		
+		/**
+		 * 
+		 */
+		public float x, y, scrollTimerV, scrollSpeedV, scrollTimerU, scrollSpeedU, timer, duration, lengthV = 1f, lengthU = 1f, alpha,
+				spriteWidth, spriteHeight;
+		
+		/** store temporary values for fields to set when the texture loads*/
+		private float temp_width, temp_height;
+		private boolean toResize;
+		
+		/** set the depth of the background */
+		public int depth;
+		
+		/** Sprite object used to draw the background on screen */
+		public AnimatedSpriteBackground sprite;
+		
+		/** when necessary to pass specifics configuration informations to the AnimatedSpriteBackground */
+		public AnimatedSpriteBackConfig backAnimationConfig; 
+		
+		public TextureWrap wrapMode = TextureWrap.Repeat;
+		private String assetPatch;
+		private String[] frames; // only when the sprite is animated
+		public boolean active = true, visible = true, fade;
+		private boolean assetIsLoaded, end, isAnimated;
+		private static boolean DEBUG = true;
+		private static AssetManager ASSET = Assets.manager;
+		private float alphaMeta = .9f, alphaOperator;
+		
+		public BackRender(Assets.Textures asset, float scrollSpeed, float duration, int depth, boolean fade) {
+			initialize(asset, scrollSpeed, duration);
+			this.depth = depth;
+			this.fade = fade;
+		}
+		
+		public BackRender(Assets.Atlas asset, String[] frames, float scrollSpeed, float duration,
+				int depth, boolean fade, AnimatedSpriteBackConfig config) {
+			initialize(asset, frames, scrollSpeed, duration);
+			this.depth = depth;
+			this.fade = fade;
+			backAnimationConfig = config;
+		}
+		
+		public BackRender(Sprite sprite, float scrollSpeed, float duration, int depth, boolean fade) {
+			initialize(sprite, scrollSpeed, duration);
+			this.depth = depth;
+			this.fade = fade;
+		}
+		
+		/** initialize this background without previously load the texture */
+		public void initialize(Assets.Textures asset, float scrollSpeed, float duration) {
+			ASSET.load(this.assetPatch = asset.path, Texture.class);
+			this.scrollSpeedV = scrollSpeed;
+			this.duration = duration;
+			assetIsLoaded = false;
+		}
+		
+		/** initialize this background without previously load the Atlas 
+		 * @param asset the name of the Atlas to load 
+		 * @param frames the name of the frames that compound the animation*/
+		public void initialize(Assets.Atlas asset, String[] frames, float scrollSpeed, float duration) {
+			ASSET.load(this.assetPatch = asset.path, TextureAtlas.class);
+			this.scrollSpeedV = scrollSpeed;
+			this.duration = duration;
+			this.frames = frames;
+			assetIsLoaded = false;
+			isAnimated = true;
+		}
+		
+		/** initialize this background with the sprite already made, then has no time to wait load */
+		public void initialize(Sprite sprite, float scrollSpeed, float duration) {
+			this.sprite = new AnimatedSpriteBackground( sprite );
+			this.scrollSpeedV = scrollSpeed;
+			this.duration = duration;
+			assetIsLoaded = true;
+		}
+		
+		public void draw(SpriteBatch batch, float deltaTime) {
+			if ( !assetIsLoaded ) {
+				ASSET.update(); //update the load of the texture
+				if (DEBUG) Debug.log("the background is loading " + assetPatch);
+				
+				if (isAnimated) {
+					// animated texture background atlas
+					if ( ASSET.isLoaded(assetPatch, TextureAtlas.class) ) {
+						TextureAtlas atlas = ASSET.get(assetPatch, TextureAtlas.class);
+						Array<TextureRegion> tex = new Array<TextureRegion>(frames.length);
+						for (String frame : frames) {
+							TextureRegion region = atlas.findRegion(frame);
+							tex.add( region );
+						}
+						//debug
+						for (int i = 0; i < tex.size; i++) {
+							if ( tex.get(i) == null ) Debug.log("frame stuck with a texture with null value inside tex animation array " + frames[i]);
+						}
+						//tex.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+						if (backAnimationConfig != null) {
+							sprite = new AnimatedSpriteBackground(new Animation(1/20f, tex, Animation.PlayMode.LOOP), backAnimationConfig);
+						} else {
+							sprite = new AnimatedSpriteBackground(new Animation(1/20f, tex, Animation.PlayMode.LOOP));
+						}
+						sprite.setAlpha(alpha);
+						sprite.setSize(640f, 640f);
+						timer = 0; // set the time to zero to begin draw the texture
+						assetIsLoaded = true;
+					}
+				} else {
+					//static texture, non animated background
+					if ( ASSET.isLoaded(assetPatch, Texture.class) ) {
+						Texture tex = ASSET.get(assetPatch, Texture.class);
+						tex.setWrap(wrapMode, wrapMode);
+						float setWidth = temp_width != 0 ? temp_width : tex.getWidth(), setHeight = temp_height != 0 ? temp_height : tex.getHeight() ;
+						Sprite tempSprite = new Sprite(tex, (int)setWidth, (int)setHeight);
+						sprite = new AnimatedSpriteBackground( tempSprite );
+						sprite.setAlpha(alpha);
+						if ( toResize ) sprite.setSize(setWidth, setHeight); // set the initial size when necessary
+						timer = 0; // set the time to zero to begin draw the texture
+						assetIsLoaded = true;
+					}
+				}
+				
+			} else {
+				// when the texture is already loaded
+				// the texture is draw on screen
+				if (end) {
+					// when the background render time end, fade out alpha
+					if (fade) { // fade out active
+						alpha -= alphaOperator;
+						sprite.setAlpha(alpha);
+						if (alpha < 0) finalize();
+					} else {
+						visible = false;
+						finalize();
+					}
+				} else {
+					if (alpha < alphaMeta) {
+						// slowly increase the alpha of this sprite 
+						if (fade) {
+							alpha += alphaOperator;
+							sprite.setAlpha(alpha);
+						} else {
+							if (alphaMeta != 0) {
+								alpha = alphaMeta;
+								sprite.setAlpha(alpha);
+							}
+						}						
+					}
+					if (duration > 0) if (timer > duration) end = true;
+				}
+				//draw the sprite if the sprite is not null
+				
+				if (sprite != null) {
+					if (visible) sprite.draw(batch);
+					//vertical texture scroll
+					if (scrollSpeedV != 0) {
+						scrollTimerV += scrollSpeedV*deltaTime;
+						sprite.setV(scrollTimerV);
+						sprite.setV2(scrollTimerV+lengthV);
+					}
+					// horizontal texture scroll
+					if (scrollSpeedU != 0) {
+						scrollTimerU += scrollSpeedU*deltaTime;
+						sprite.setU(scrollTimerU);
+						sprite.setU2(scrollTimerU+lengthU);
+					}
+				}
+				
+				timer += deltaTime;
+			}
+		}
+		
+		/** ends the use of this background */
+		public void finalize() {
+			if (fade) {
+				if (alpha > 0) {
+					end = true;
+					return;
+				}
+			}
+			dispose();
+			active = false;
+		}
+		
+		/** set the alpha value for increment and decrement, fade in/out
+		 * @param alphaMeta is the max total amount of alpha to fill in the fade in
+		 * @param alphaOperator is the amount to increase and decrease in the fade in/out each step*/
+		public void setAlphaAttribute(float alphaMeta, float alphaOperator) {
+			this.alphaMeta = alphaMeta;
+			this.alphaOperator = alphaOperator;
+		}
+		
+		public void setTextureBrowser(float horizontalSpeed, float verticalSpeed) {
+			scrollSpeedV = verticalSpeed;
+			scrollSpeedU = horizontalSpeed;
+		}
+		
+		public void setSize(float width, float height) {
+			if (sprite == null) {
+				toResize = true;
+				temp_width = width;
+				temp_height = height;
+				return;
+			}
+			if ( width > sprite.getWidth() ) spriteWidth = width;
+			if ( width > sprite.getHeight() ) spriteHeight = height;
+			if ( ( spriteWidth == width || spriteHeight == height ) ) sprite.setSize(width, height);
+			toResize = false;
+		}
+		
+		public void setPosition(float xx, float yy) {
+			x = (xx != x) ? xx : x;
+			y = (yy != y) ? yy : y;
+			if (sprite != null) sprite.setPosition(x, y);
+		}
+		
+		public void setRegion(float u, float v, float u2, float v2) {
+			if (sprite == null) return;
+			sprite.setRegion(u, v, u2, v2);
+		}
+		
+		@Override
+		public int compareTo(BackRender other) {
+			return this.depth - other.depth;
+		}
+		
+		public void dispose() {
+			if (sprite != null) sprite.dispose();
+			if (assetPatch != null) {
+				// only if the asset patch are been used
+				if ( ASSET.isLoaded(assetPatch) ) {
+					int currentTextureReferences = ASSET.getReferenceCount(assetPatch);
+					ASSET.setReferenceCount(assetPatch, currentTextureReferences-1);
+					if (currentTextureReferences-1 <= 0) {
+						if (VirusByteGame.BACK.unloadBackgroundTextureAssets(assetPatch)) {
+							Debug.log("background asset not used unloaded!");
+							if (DEBUG) Debug.log("the " + assetPatch +" background texture has unloaded.");
+						}
+					}
+					//ASSET.unload(assetPatch); // unload the texture used to this background
+					//Debug.log("total references to this back is: " + ASSET.getReferenceCount(assetPatch));
+				}
+				//if ( ASSET.isLoaded(assetPatch) ) ASSET.unload(assetPatch); // unload the texture used to this background
+				
+			}
+			visible = false;
+		}
+		
+	}
+	
+	public enum Effect { healing, damage, flash, lazer }
+	
+	public static class ForeEffectRender extends BackRender {
+		private int swap = 0, swapLaserColor = 6, laserSwapTime = 1;
+		private Effect effectType;
+		
+		public ForeEffectRender(Sprite sprite, Effect type, float duration, int depth) {
+			super(sprite, 0, duration, depth, false);
+			setAlphaAttribute(0, 0);
+			Color color;
+			switch (type) {
+			case healing:
+				color = Color.GREEN;
+				break;
+			case damage:
+				color = Color.RED;
+				break;
+			case flash:
+				color = Color.WHITE;
+				break;
+			case lazer:
+				color = Color.BLUE;
+				break;
+			default: color = Color.WHITE; 
+			}
+			this.sprite.setColor(color);
+			effectType = type;
+		}
+		
+		@Override
+		public void draw(SpriteBatch batch, float deltaTime) {
+			//float alpha 
+			
+			if (effectType == Effect.lazer) {
+				
+				if (swapLaserColor++ > 5) {
+					swapLaserColor = 0;
+					switch (laserSwapTime)
+					{
+					case 0:
+						sprite.setColor(Color.BLUE);
+						break;
+					case 1:
+						sprite.setColor(Color.RED);
+						break;
+					case 2:
+						sprite.setColor(Color.WHITE);
+						break;
+					case 3:
+						sprite.setColor(Color.BLACK);
+						break;
+					}
+					laserSwapTime = laserSwapTime == 3 ? 0 : laserSwapTime+1;
+					
+					alpha = alpha < .5f ? MyUtils.choose(0.6f, 0.8f) : MyUtils.choose(0.3f, 0.4f); 
+					sprite.setAlpha( alpha );
+				}
+			} else {
+				if (swap++ > 5) {
+					swap = 0;
+					alpha = alpha < .5f ?  MyUtils.choose(0.6f, 0.8f) : MyUtils.choose(0.3f, 0.4f); 
+					sprite.setAlpha( alpha );
+					//Flash.color.a = alpha != .8f ? .8f : .3f;
+				}
+			}
+			super.draw(batch, deltaTime);
+		}
+		
+	}
+	
+	/**
+	 * Make a new sprite shape used generally used to wrap the screen
+	 * with a colored shape
+	 * @param width sprite width
+	 * @param height sprite height
+	 * @return Sprite with the parameters size
+	 */
+	private Sprite makeSpriteShape(float width, float height) {
+		Pixmap tile = new Pixmap(64, 64, Format.RGBA8888);
+		tile.setColor(1f, 1f, 1f, 1f);
+		tile.fill();
+		Texture tex = new Texture(tile);
+		tile.dispose();
+		tex.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+		Sprite spr = new Sprite(tex);
+		spr.setSize(width, height);
+		return spr; 
+	}
+	
+	/** Define a new random back wrapper shape color  */
+	public void setBackColor() {
+		setBackColor(MathUtils.random(255), MathUtils.random(255), MathUtils.random(255));
+	}
+	
+	/**
+	 * Set a new back wrapper shape color with parameters 
+	 * @param r red parameter
+	 * @param g green parameter
+	 * @param b blue parameter
+	 */
+	public void setBackColor(int r, int g, int b) {
+		backColor.set(r/255f, g/255f, b/255f, 0.9f);
+		tileBack.setColor(backColor);
+		colorBackground.sprite.setColor(backColor); // now is this that really change the colour of the background
+	}
+	
+	public void dispose() {
+		//spriteBack.getTexture().dispose();
+		genericScreenSizeSprite.getTexture().dispose();
+		for (BackRender back : backgrounds) back.dispose();
+		for (BackRender back : foregrounds) back.dispose();
+		//Assets.manager.unload(circuitTexture);
+		//Assets.manager.unload(hiddenTexture);
+		shader.dispose();
+	}
+	
+	public void resize(float width, float height) {
+		// Update world size
+		worldWidth = VirusByteGame.VIEWPORT.getWorldWidth();
+		worldHeight = VirusByteGame.VIEWPORT.getWorldHeight();
+		genericScreenSizeSprite.setSize(worldWidth+100f, worldHeight);
+		colorBackground.setSize(worldWidth, worldHeight);
+		circuitBackground.setSize(width, spriteBack.getHeight());
+		// center hide background
+		if (hide_background != null) hide_background.setPosition((VirusByteGame.VIEWPORT.getWorldWidth()*.5f)-(hide_background1.getWidth()*.5f), 0);
+	}
+}

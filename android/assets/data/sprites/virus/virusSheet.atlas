@@ -1,0 +1,376 @@
+
+virusSheet.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+worm-trail
+  rotate: false
+  xy: 1, 402
+  size: 64, 105
+  orig: 64, 105
+  offset: 0, 0
+  index: -1
+worm1-off
+  rotate: false
+  xy: 1, 295
+  size: 64, 105
+  orig: 64, 105
+  offset: 0, 0
+  index: -1
+worm1-on
+  rotate: false
+  xy: 67, 402
+  size: 64, 105
+  orig: 64, 105
+  offset: 0, 0
+  index: -1
+worm2-off
+  rotate: false
+  xy: 1, 188
+  size: 64, 105
+  orig: 64, 105
+  offset: 0, 0
+  index: -1
+worm2-on
+  rotate: false
+  xy: 67, 295
+  size: 64, 105
+  orig: 64, 105
+  offset: 0, 0
+  index: -1
+nyxel-trail
+  rotate: false
+  xy: 133, 429
+  size: 80, 78
+  orig: 80, 78
+  offset: 0, 0
+  index: -1
+nyxel1
+  rotate: false
+  xy: 133, 349
+  size: 80, 78
+  orig: 80, 78
+  offset: 0, 0
+  index: -1
+nyxel2
+  rotate: false
+  xy: 215, 429
+  size: 80, 78
+  orig: 80, 78
+  offset: 0, 0
+  index: -1
+spyware-trail
+  rotate: false
+  xy: 215, 355
+  size: 79, 72
+  orig: 79, 72
+  offset: 0, 0
+  index: -1
+spyware1-eye
+  rotate: false
+  xy: 297, 435
+  size: 79, 72
+  orig: 79, 72
+  offset: 0, 0
+  index: -1
+spyware1
+  rotate: false
+  xy: 378, 435
+  size: 79, 72
+  orig: 79, 72
+  offset: 0, 0
+  index: -1
+spyware2-eye
+  rotate: false
+  xy: 459, 435
+  size: 79, 72
+  orig: 79, 72
+  offset: 0, 0
+  index: -1
+spyware2
+  rotate: false
+  xy: 540, 435
+  size: 79, 72
+  orig: 79, 72
+  offset: 0, 0
+  index: -1
+bug-trail
+  rotate: false
+  xy: 621, 446
+  size: 85, 61
+  orig: 85, 61
+  offset: 0, 0
+  index: -1
+bug1
+  rotate: false
+  xy: 708, 446
+  size: 85, 61
+  orig: 85, 61
+  offset: 0, 0
+  index: -1
+bug2
+  rotate: false
+  xy: 795, 446
+  size: 85, 61
+  orig: 85, 61
+  offset: 0, 0
+  index: -1
+trojan-trail
+  rotate: false
+  xy: 1, 104
+  size: 65, 82
+  orig: 65, 82
+  offset: 0, 0
+  index: -1
+trojan1
+  rotate: false
+  xy: 1, 20
+  size: 65, 82
+  orig: 65, 82
+  offset: 0, 0
+  index: -1
+trojan2
+  rotate: false
+  xy: 67, 211
+  size: 65, 82
+  orig: 65, 82
+  offset: 0, 0
+  index: -1
+energyzer-light2
+  rotate: false
+  xy: 882, 437
+  size: 70, 70
+  orig: 70, 70
+  offset: 0, 0
+  index: -1
+plague-trail
+  rotate: false
+  xy: 954, 437
+  size: 64, 70
+  orig: 64, 70
+  offset: 0, 0
+  index: -1
+plague1
+  rotate: false
+  xy: 68, 139
+  size: 64, 70
+  orig: 64, 70
+  offset: 0, 0
+  index: -1
+plague2
+  rotate: false
+  xy: 68, 67
+  size: 64, 70
+  orig: 64, 70
+  offset: 0, 0
+  index: -1
+antivirus-trail
+  rotate: false
+  xy: 68, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+freeze-bot-trail
+  rotate: false
+  xy: 133, 296
+  size: 50, 51
+  orig: 50, 51
+  offset: 0, 0
+  index: -1
+infector-trail
+  rotate: false
+  xy: 134, 224
+  size: 59, 70
+  orig: 59, 70
+  offset: 0, 0
+  index: -1
+infector1
+  rotate: false
+  xy: 134, 152
+  size: 59, 70
+  orig: 59, 70
+  offset: 0, 0
+  index: -1
+infector2
+  rotate: false
+  xy: 134, 80
+  size: 59, 70
+  orig: 59, 70
+  offset: 0, 0
+  index: -1
+antivirus1
+  rotate: false
+  xy: 134, 14
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+flamebot-trail
+  rotate: false
+  xy: 185, 297
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+antivirus2
+  rotate: false
+  xy: 237, 289
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+energyzer-light1
+  rotate: false
+  xy: 195, 223
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+energyzer-trail
+  rotate: false
+  xy: 195, 157
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+energyzer1
+  rotate: false
+  xy: 195, 91
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+energyzer2
+  rotate: false
+  xy: 200, 25
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+psycho-trail
+  rotate: false
+  xy: 261, 223
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+psycho1
+  rotate: false
+  xy: 261, 157
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+psycho2
+  rotate: false
+  xy: 261, 91
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+freeze-bot-sick1
+  rotate: false
+  xy: 266, 27
+  size: 62, 62
+  orig: 62, 62
+  offset: 0, 0
+  index: -1
+freeze-bot-sick2
+  rotate: false
+  xy: 621, 382
+  size: 62, 62
+  orig: 62, 62
+  offset: 0, 0
+  index: -1
+freeze-bot1
+  rotate: false
+  xy: 685, 382
+  size: 62, 62
+  orig: 62, 62
+  offset: 0, 0
+  index: -1
+freeze-bot2
+  rotate: false
+  xy: 749, 382
+  size: 62, 62
+  orig: 62, 62
+  offset: 0, 0
+  index: -1
+parasite-trail
+  rotate: false
+  xy: 813, 383
+  size: 50, 61
+  orig: 50, 61
+  offset: 0, 0
+  index: -1
+parasite1
+  rotate: false
+  xy: 865, 374
+  size: 50, 61
+  orig: 50, 61
+  offset: 0, 0
+  index: -1
+parasite2
+  rotate: false
+  xy: 917, 374
+  size: 50, 61
+  orig: 50, 61
+  offset: 0, 0
+  index: -1
+flamebot1
+  rotate: false
+  xy: 969, 385
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+flamebot2
+  rotate: false
+  xy: 969, 333
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+shockbot-trail
+  rotate: false
+  xy: 813, 331
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+shockbot1
+  rotate: false
+  xy: 865, 322
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+shockbot2
+  rotate: false
+  xy: 917, 322
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+bots-trail
+  rotate: false
+  xy: 969, 287
+  size: 44, 44
+  orig: 44, 44
+  offset: 0, 0
+  index: -1
+bots1
+  rotate: false
+  xy: 297, 389
+  size: 44, 44
+  orig: 44, 44
+  offset: 0, 0
+  index: -1
+bots2
+  rotate: false
+  xy: 343, 389
+  size: 44, 44
+  orig: 44, 44
+  offset: 0, 0
+  index: -1

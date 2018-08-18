@@ -1,0 +1,20 @@
+{
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	visitor20-font: { file: data/fonts/visitor20_bold.fnt }
+},
+com.badlogic.gdx.graphics.Color: {
+	white: { a: 1, b: 1, g: 1, r: 1  }
+},
+com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+	labelButton: { name: labelButton, color: white },
+	labelButtonSelected: { name: labelButtonSelected, color: white },
+	directoryIcon: { name: dirIcon, color: white },
+	fileIcon: { name: fileIcon, color: white },
+	returnIcon: { name: returnIcon, color: white },
+	playIcon: { name: playIcon, color: white }
+},
+com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+	labelButton: { font: visitor20-font, fontColor: white },
+	default: labelButton
+}
+}
